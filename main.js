@@ -1,9 +1,12 @@
 import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 
-const MODEL_ID = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
+const MODEL_ID = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
+const LOAD_TIMEOUT_MS = 240_000;
 const SYSTEM_PROMPT = [
   "You are a concise Korean AI demo assistant for ModuAI.",
-  "Explain AI agents, SMS interfaces, and browser-based AI in simple Korean.",
+  "Answer only in Korean.",
+  "Explain AI agents, SMS interfaces, and browser-based AI in simple practical language.",
+  "If uncertain, say so plainly instead of inventing facts.",
   "Keep answers under 5 short sentences.",
 ].join(" ");
 
@@ -55,6 +58,21 @@ function hasWebGPU() {
   return Boolean(navigator.gpu);
 }
 
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      window.setTimeout(() => {
+        reject(
+          new Error(
+            "모델 로딩 시간이 너무 오래 걸립니다. 네트워크 또는 브라우저 WebGPU 환경을 확인해주세요."
+          )
+        );
+      }, ms);
+    }),
+  ]);
+}
+
 async function initEngine() {
   inputEl.disabled = true;
   setStatus("환경 확인 중");
@@ -70,12 +88,15 @@ async function initEngine() {
 
   try {
     setStatus("모델 로딩 준비 중");
-    engine = await CreateMLCEngine(MODEL_ID, {
-      initProgressCallback: (report) => {
-        const text = report?.text || "모델을 로딩하고 있습니다";
-        setStatus(text);
-      },
-    });
+    engine = await withTimeout(
+      CreateMLCEngine(MODEL_ID, {
+        initProgressCallback: (report) => {
+          const text = report?.text || "모델을 로딩하고 있습니다";
+          setStatus(text);
+        },
+      }),
+      LOAD_TIMEOUT_MS
+    );
 
     setStatus("실행 준비 완료", "ready");
     setInputEnabled(true);
@@ -84,7 +105,7 @@ async function initEngine() {
     setStatus("로딩 실패", "error");
     appendMessage(
       "assistant",
-      "모델 로딩에 실패했습니다. 브라우저, GPU 지원 여부, 네트워크 상태에 따라 실행이 제한될 수 있습니다."
+      `모델 로딩에 실패했습니다.\n\n확인할 것:\n- 최신 Chrome 또는 Edge 데스크톱 브라우저인지\n- WebGPU가 활성화되어 있는지\n- 회사/학교 네트워크에서 Hugging Face 다운로드가 막히지 않았는지\n- 모바일 브라우저가 아닌지\n\n오류: ${error?.message || "알 수 없는 오류"}`
     );
   }
 }
