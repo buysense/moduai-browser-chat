@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="브라우저에서 바로 실행해보는 모두의AI 로컬 AI 챗 데모"
+    />
+    <title>모두의AI 브라우저 챗 데모</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="intro" aria-labelledby="title">
+        <div>
+          <p class="eyebrow">Browser AI Demo</p>
+          <h1 id="title">브라우저에서 바로 써보는 AI 챗</h1>
+          <p class="lead">
+            서버 API를 호출하지 않고, 가능한 경우 사용자의 브라우저 안에서
+            모델을 직접 실행하는 실험 데모입니다.
+          </p>
+        </div>
+        <div class="status-card" aria-live="polite">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">환경 확인 중</span>
+        </div>
+      </section>
+
+      <section class="notice" id="supportNotice">
+        <strong>처음 실행 시 모델 다운로드와 초기화에 시간이 걸릴 수 있습니다.</strong>
+        <span>
+          WebGPU 지원 브라우저가 필요하며, 모바일이나 구형 브라우저에서는
+          실행되지 않을 수 있습니다.
+        </span>
+      </section>
+
+      <section class="chat-panel" aria-label="AI chat demo">
+        <div class="messages" id="messages">
+          <article class="message assistant">
+            <div class="avatar">AI</div>
+            <div class="bubble">
+              안녕하세요. 이 데모는 브라우저가 AI 에이전트의 접점이 될 수
+              있는지 보여주기 위한 작은 실험입니다. 아래 예시 질문을 눌러보세요.
+            </div>
+          </article>
+        </div>
+
+        <div class="chips" aria-label="예시 질문">
+          <button type="button" data-prompt="AI 에이전트란 무엇인가요?">
+            AI 에이전트란?
+          </button>
+          <button type="button" data-prompt="SMS 기반 AI가 왜 흥미로운가요?">
+            SMS AI가 흥미로운 이유
+          </button>
+          <button
+            type="button"
+            data-prompt="브라우저에서 직접 AI를 실행하면 어떤 장점이 있나요?"
+          >
+            브라우저 AI의 장점
+          </button>
+        </div>
+
+        <form class="composer" id="chatForm">
+          <label class="sr-only" for="promptInput">메시지 입력</label>
+          <input
+            id="promptInput"
+            name="prompt"
+            autocomplete="off"
+            placeholder="짧은 질문을 입력해보세요"
+            maxlength="300"
+          />
+          <button id="sendButton" type="submit" disabled>전송</button>
+        </form>
+      </section>
+
+      <section class="footnote">
+        <p>
+          이 페이지는 모두의AI 블로그용 브라우저 로컬 모델 실험입니다. 답변
+          품질은 고성능 서버 모델과 다를 수 있습니다.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
