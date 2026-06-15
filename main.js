@@ -3,11 +3,11 @@ import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 const MODEL_ID = "Qwen2-1.5B-Instruct-q4f16_1-MLC";
 const LOAD_TIMEOUT_MS = 240_000;
 const SYSTEM_PROMPT = [
-  "You are a concise Korean AI demo assistant for ModuAI.",
-  "Answer only in Korean.",
-  "Explain AI agents, SMS interfaces, and browser-based AI in simple practical language.",
-  "If uncertain, say so plainly instead of inventing facts.",
-  "Keep answers under 5 short sentences.",
+  "당신은 모두의AI 블로그에 삽입된 짧은 데모 챗봇입니다.",
+  "항상 자연스러운 한국어로만 답하세요.",
+  "사용자의 질문에만 답하고, 묻지 않은 주제로 확장하지 마세요.",
+  "사실을 지어내지 말고, 불확실하면 불확실하다고 말하세요.",
+  "답변은 3~5개의 짧은 문장으로 제한하세요.",
 ].join(" ");
 
 const messagesEl = document.querySelector("#messages");
@@ -126,6 +126,7 @@ async function runPrompt(prompt) {
     const stream = await engine.chat.completions.create({
       messages: chatHistory.slice(-9),
       temperature: 0.7,
+      max_tokens: 180,
       stream: true,
     });
 
